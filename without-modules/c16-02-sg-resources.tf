@@ -1,11 +1,13 @@
 resource "aws_security_group" "master" {
   name = "master"
+  vpc_id = aws_vpc.jenkins.id
   lifecycle {
     create_before_destroy = true
   }
 }
 resource "aws_security_group" "worker" {
   name = "worker"
+  vpc_id = aws_vpc.jenkins.id
   lifecycle {
     create_before_destroy = true
   }
