@@ -1,10 +1,10 @@
 variable "master_ami_type" {
     type = string
-    default = "t2.micro"
+    default = "c4.large"
 }
 variable "worker_ami_type" {
     type = string
-    default = "t2.micro"
+    default = "c4.large"
 }
 variable "ami_name" {
   description = "The name of the amzn2 ami. Used for searching for AMI id."
