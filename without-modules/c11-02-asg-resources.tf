@@ -34,9 +34,8 @@ resource "aws_launch_template" "worker" {
 }
 resource "aws_autoscaling_group" "master" {
   name                      = "master"
-  max_size                  = 2
+  max_size                  = 3
   min_size                  = 1
-  desired_capacity          = 1
   health_check_grace_period = 300
   health_check_type         = "ELB"
   force_delete              = true
@@ -50,8 +49,7 @@ resource "aws_autoscaling_group" "master" {
 }
 resource "aws_autoscaling_group" "worker" {
   capacity_rebalance  = true
-  desired_capacity    = 1
-  max_size            = 2
+  max_size            = 3
   min_size            = 1
   vpc_zone_identifier = [element(aws_subnet.private.*.id,0)]
   mixed_instances_policy {
@@ -66,5 +64,25 @@ resource "aws_autoscaling_group" "worker" {
         version = "$Latest"
     }
   }
+  }
+}
+resource "aws_autoscaling_policy" "master" {
+  name                   = "master"
+  scaling_adjustment     = 1
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = 300
+  autoscaling_group_name = aws_autoscaling_group.master.name
+}
+resource "aws_autoscaling_policy" "worker" {
+  name                   = "worker"
+  adjustment_type        = "ChangeInCapacity"
+  policy_type = "TargetTrackingScaling"
+  autoscaling_group_name = aws_autoscaling_group.worker.name
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+
+    target_value = 80.0
   }
 }
