@@ -1,0 +1,4 @@
+#!/bin/bash 
+sudo echo "Port ${ssh_port}" >> /etc/ssh/sshd_config
+sudo service sshd restart
+echo "SSH port changed"
